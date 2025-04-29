@@ -1,9 +1,6 @@
 import { db } from "@/app/lib/firebase";
 import "server-only";
 import Stripe from "stripe";
-import { Resend } from "resend";
-
-const resend = new Resend(process.env.RESEND_API_KEY);
 
 // Desativa o parsing padrão do Next.js para ler o corpo cru (necessário para verificar o webhook)
 export const config = {
@@ -73,21 +70,6 @@ export async function handleStripePayment(event: Stripe.CheckoutSessionCompleted
             });
             console.log("Status do usuário atualizado");
 
-            // Enviar email de confirmação de pagamento
-            await resend.emails.send({
-                from: "onboarding@resend.dev",
-                to: userData.email,
-                subject: "Pagamento confirmado! 🎉",
-                html: `
-                    <h1>Pagamento confirmado!</h1>
-                    <p>Olá ${userData.name || 'usuário'},</p>
-                    <p>Seu pagamento foi processado com sucesso.</p>
-                    <p>Valor: R$ ${amount.toFixed(2)}</p>
-                    <p>Obrigado por sua compra! Se precisar de ajuda, estamos à disposição.</p>
-                    <p>Atenciosamente,<br>Equipe da Plataforma</p>
-                `
-            });
-            console.log("Email de confirmação enviado para:", userData.email);
         } catch (error) {
             console.error("Erro ao processar pagamento:", error);
             if (error instanceof Error) {
