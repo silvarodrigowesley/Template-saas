@@ -6,6 +6,11 @@ interface CheckoutData {
     useEmail?: string;
 }
 
+interface ResponseData {
+    sessionId: string;
+    error?: string;
+}
+
 export function useStripe(){
     const [stripe, setStripe] = useState<Stripe | null>(null);
     
@@ -28,7 +33,7 @@ export function useStripe(){
                 },
                 body: JSON.stringify(checkoutData),
             });
-            const data = await response.json();
+            const data: ResponseData = await response.json();
 
             await stripe.redirectToCheckout({sessionId: data.sessionId});
             console.log("data", data);
@@ -55,14 +60,10 @@ export function useStripe(){
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
 
-            const data = await response.json();
-            
-            if (!data.sessionId) {
-                throw new Error('No session ID received from server');
-            }
-
+            const data: ResponseData = await response.json();
             await stripe.redirectToCheckout({sessionId: data.sessionId});
-            console.log("data", data);      
+            console.log("data", data);
+
         }catch(error){
             console.error("Error creating subscription checkout:", error);
             throw error;
@@ -70,19 +71,21 @@ export function useStripe(){
     }
 
     async function handleCreatePortal(){
-    
-         const response = await fetch("/api/stripe/create-portal", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-           
-         });
-        const data = await response.json();
-        console.log("data", data);
-
-        window.location.href = data.url;
+        try{
+            const response = await fetch("/api/stripe/create-portal", {
+                method: "POST",
+            });
+            const data: { url: string } = await response.json();
+            window.location.href = data.url;
+        }catch(error){
+            console.error("Error creating portal:", error);
+            throw error;
+        }
     }
 
-    return {createPaymentStripeCheckout, createSubscriptionStripeCheckout, handleCreatePortal};
+    return {
+        createPaymentStripeCheckout,
+        createSubscriptionStripeCheckout,
+        handleCreatePortal
+    };
 }

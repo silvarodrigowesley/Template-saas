@@ -15,7 +15,6 @@ export async function handleStripeSubscription(event: Stripe.CheckoutSessionComp
         }
 
         const userDoc = userRef.docs[0];
-        const userData = userDoc.data();
         console.log("Usuário encontrado:", userDoc.id);
         
         await userDoc.ref.update({
