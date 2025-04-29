@@ -11,6 +11,11 @@ interface ResponseData {
     error?: string;
 }
 
+interface PortalResponse {
+    url: string;
+    error?: string;
+}
+
 export function useStripe(){
     const [stripe, setStripe] = useState<Stripe | null>(null);
     
@@ -75,7 +80,7 @@ export function useStripe(){
             const response = await fetch("/api/stripe/create-portal", {
                 method: "POST",
             });
-            const data: { url: string } = await response.json();
+            const data: PortalResponse = await response.json();
             window.location.href = data.url;
         }catch(error){
             console.error("Error creating portal:", error);

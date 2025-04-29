@@ -2,7 +2,7 @@ import { auth } from "@/app/lib/auth";
 import { db } from "@/app/lib/firebase";
 import { NextResponse } from "next/server";
 
-export async function POST(){
+export async function POST() {
     const session = await auth();
     const userId = session?.user?.id;
 
@@ -10,7 +10,7 @@ export async function POST(){
         return NextResponse.json({error: "Usuário nao Autorizado"}, {status: 401});
     }
 
-   try{
+   try {
     const userRef = db.collection("user").doc(userId);
     const userDoc = await userRef.get();
 
@@ -25,7 +25,7 @@ export async function POST(){
 
     return NextResponse.json({url: "https://billing.stripe.com/p/login/test_14kfZbaSm9Ln9mUdQQ"});
     
-   }catch(error){
+   } catch(error) {
     console.error("Error creating stripe customer:", error);
     return NextResponse.json({error: "Error creating stripe customer"}, {status: 500});
    }
