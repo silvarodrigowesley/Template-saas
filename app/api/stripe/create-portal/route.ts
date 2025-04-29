@@ -1,6 +1,6 @@
 import { auth } from "@/app/lib/auth";
 import { db } from "@/app/lib/firebase";
-import stripe from "@/app/lib/stripe";
+
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest){
